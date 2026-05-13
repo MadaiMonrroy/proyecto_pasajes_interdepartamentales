@@ -1,2 +1,4 @@
 node_modules/
-.envgit add .
+backend/.env
+frontend/.env
+.env
