@@ -46,7 +46,7 @@ function App() {
   const iniciarSesion = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/login', {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo, password })
@@ -65,7 +65,7 @@ function App() {
     if (edad < 18) return alert("Debes ser mayor de 18 años para crear una cuenta.");
 
     try {
-      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/registro', {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -97,7 +97,7 @@ function App() {
     e.preventDefault();
     if (!asiento) return alert("Por favor elige un asiento");
     try {
-      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/comprar', {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/comprar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
