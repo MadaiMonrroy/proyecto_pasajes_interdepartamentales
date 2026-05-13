@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
@@ -8,11 +9,11 @@ app.use(express.json());
 
 // Conexión a la base de datos
 const db = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: '77448360', 
-    database: 'bddViajesDepartamentales'
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.connect(err => {
@@ -98,6 +99,8 @@ app.get('/api/asientos-ocupados/:id_viaje', (req, res) => {
 });
 
 // ARRANCAR EL SERVIDOR
-app.listen(3000, () => {
-    console.log('Servidor Backend corriendo en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
