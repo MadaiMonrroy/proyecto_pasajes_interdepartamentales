@@ -37,7 +37,7 @@ function App() {
   const seleccionarViaje = async (viaje) => {
     setViajeSeleccionado(viaje);
     try {
-      const resp = await fetch(`http://localhost:3000/api/asientos-ocupados/${viaje.id}`);
+      const resp = await fetch(`${import.meta.env.VITE_API_URL}/api/asientos-ocupados/${viaje.id}`);
       const ocupados = await resp.json();
       setAsientosOcupados(ocupados);
     } catch (error) { console.error("Error cargando asientos"); }
@@ -46,7 +46,7 @@ function App() {
   const iniciarSesion = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await fetch('http://localhost:3000/api/login', {
+      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo, password })
@@ -65,7 +65,7 @@ function App() {
     if (edad < 18) return alert("Debes ser mayor de 18 años para crear una cuenta.");
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/registro', {
+      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -87,7 +87,7 @@ function App() {
     setBuscado(true);
     setViajeSeleccionado(null);
     try {
-      const respuesta = await fetch(`http://localhost:3000/api/viajes?origen=${origen}&destino=${destino}&fecha=${fecha}`);
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/viajes?origen=${origen}&destino=${destino}&fecha=${fecha}`);
       const datos = await respuesta.json();
       setResultados(datos);
     } catch (error) { alert("Error al buscar."); }
@@ -97,7 +97,7 @@ function App() {
     e.preventDefault();
     if (!asiento) return alert("Por favor elige un asiento");
     try {
-      const respuesta = await fetch('http://localhost:3000/api/comprar', {
+      const respuesta = await fetch('${import.meta.env.VITE_API_URL}/api/comprar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
