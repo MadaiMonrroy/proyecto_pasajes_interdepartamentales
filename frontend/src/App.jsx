@@ -129,7 +129,7 @@ function App() {
         <div className="card shadow-lg border-0 rounded-4" style={{ width: '450px' }}>
           <div className="card-body p-5">
             <h3 className="text-center mb-4 text-primary fw-bold">
-              {esRegistro ? '📝 Crea tu Cuenta' : '🚌 Iniciar Sesión'}
+              {esRegistro ? '📝 Crea tu Cuenta' : '🚌 Login'}
             </h3>
             
             {esRegistro ? (
