@@ -1,7 +1,10 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  family: 4,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
@@ -9,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 async function enviarCorreo(para, asunto, html, attachments = []) {
-  await transporter.sendMail({
+  return await transporter.sendMail({
     from: `"Sistema de Pasajes" <${process.env.GMAIL_USER}>`,
     to: para,
     subject: asunto,
