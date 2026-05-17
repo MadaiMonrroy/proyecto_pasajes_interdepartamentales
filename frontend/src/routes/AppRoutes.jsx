@@ -35,7 +35,7 @@ function RutaPrivada({ children }) {
 
 function RedireccionInicial() {
   const { usuario } = useAuth();
-
+if (loading) return null; // ← agregar esto
   if (!usuario) return <Navigate to="/login" />;
 
   if (usuario.rol === 'Administrador') return <Navigate to="/admin" />;
@@ -106,7 +106,7 @@ export default function AppRoutes() {
           }
         />
 
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
