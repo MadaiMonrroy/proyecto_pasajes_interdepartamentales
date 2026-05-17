@@ -34,12 +34,15 @@ function RutaPrivada({ children }) {
 }
 
 function RedireccionInicial() {
-  const { usuario } = useAuth();
-if (loading) return (
+  const { usuario, loading } = useAuth(); // ← agregar loading
+
+  if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" />
     </div>
-  );  if (!usuario) return <Navigate to="/login" />;
+  );
+
+  if (!usuario) return <Navigate to="/login" />;
 
   if (usuario.rol === 'Administrador') return <Navigate to="/admin" />;
   if (usuario.rol === 'Encargado') return <Navigate to="/encargado" />;
