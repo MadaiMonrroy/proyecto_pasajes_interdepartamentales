@@ -1,12 +1,51 @@
 import { useEffect, useState } from 'react';
 import { misBoletos } from '../../api/boletosApi';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+async function descargarPDF(id, codigo) {
+  const res = await fetch(`${API_URL}/api/boletos/${id}/pdf`, {
+    headers: { Authorization: `Bearer ${getToken()}` }
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error al generar PDF');
+
+  // Convertir base64 a blob y descargar
+  const byteCharacters = atob(data.pdf);
+  const byteNumbers = Array.from(byteCharacters, c => c.charCodeAt(0));
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${codigo}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function MisBoletos() {
   const [boletos, setBoletos] = useState([]);
+  const [descargando, setDescargando] = useState(null);
 
   useEffect(() => {
     misBoletos().then(setBoletos).catch(err => alert(err.message));
   }, []);
+
+  const handleDescargar = async (id, codigo) => {
+    setDescargando(id);
+    try {
+      await descargarPDF(id, codigo);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setDescargando(null);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -14,19 +53,25 @@ export default function MisBoletos() {
 
       <div className="grid gap-4">
         {boletos.map(b => (
-          <div key={b.id} className="bg-white rounded-xl! shadow p-5">
+          <div key={b.id} className="bg-white rounded-xl shadow p-5">
             <div className="flex justify-between">
               <div>
                 <div className="font-bold">{b.codigo_boleto}</div>
                 <div>{b.origen} → {b.destino}</div>
-                <div className="text-sm text-gray-500">{new Date(b.fecha_hora_salida).toLocaleString()}</div>
+                <div className="text-sm text-gray-500">
+                  {new Date(b.fecha_hora_salida).toLocaleString()}
+                </div>
                 <div>Asiento: {b.numero_asiento} | Estado: {b.estado}</div>
               </div>
 
               <div className="text-right">
                 <div className="font-bold text-green-600">Bs. {b.monto_pagado}</div>
-                <button className="mt-2 border px-4 py-2 rounded-lg">
-                  Descargar PDF
+                <button
+                  onClick={() => handleDescargar(b.id, b.codigo_boleto)}
+                  disabled={descargando === b.id}
+                  className="mt-2 border px-4 py-2 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {descargando === b.id ? 'Generando...' : 'Descargar PDF'}
                 </button>
               </div>
             </div>

@@ -9,7 +9,8 @@ const {
   listarVentasSucursal,
   listarViajesDisponiblesEncargado,
   cancelarBoletoEncargado,
-  resumenEncargado
+  resumenEncargado,
+  descargarBoletoPDF
 } = require('../controllers/boletos.controller');
 
 const {
@@ -37,4 +38,6 @@ router.get('/resumen-encargado',
   permitirRoles('Encargado'),
   resumenEncargado
 );
+router.get('/:id/pdf', verificarToken, permitirRoles('Cliente'), descargarBoletoPDF);
+
 module.exports = router;

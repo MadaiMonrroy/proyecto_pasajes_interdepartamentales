@@ -677,6 +677,62 @@ async function resumenEncargado(req, res) {
     res.status(500).json({ error: 'Error al obtener resumen' });
   }
 }
+async function descargarBoletoPDF(req, res) {
+  try {
+    const { id } = req.params;
+    const id_cliente = req.usuario.id;
+
+    const [boletos] = await db.query(`
+      SELECT
+        bo.id,
+        bo.codigo_boleto,
+        bo.nombre_pasajero,
+        bo.ci_pasajero,
+        bo.numero_asiento,
+        bo.metodo_pago,
+        bo.monto_pagado,
+        bo.id_vendedor,
+        v.origen,
+        v.destino,
+        v.fecha_hora_salida,
+        v.fecha_hora_llegada,
+        b.placa,
+        b.tipo_bus
+      FROM boletos bo
+      INNER JOIN viajes v ON v.id = bo.id_viaje
+      INNER JOIN buses b ON b.id = v.id_bus
+      WHERE bo.id = ? AND bo.id_cliente = ?
+      LIMIT 1
+    `, [id, id_cliente]);
+
+    if (boletos.length === 0) {
+      return res.status(404).json({ error: 'Boleto no encontrado' });
+    }
+
+    const boleto = boletos[0];
+
+    const pdfBuffer = await generarComprobantePDF({
+      compra: {
+        metodo_pago: boleto.metodo_pago,
+        total: boleto.monto_pagado,
+        vendedor: 'Compra a través del sistema'
+      },
+      viaje: boleto,
+      pasajeros: [{
+        nombre_pasajero: boleto.nombre_pasajero,
+        ci_pasajero: boleto.ci_pasajero,
+        numero_asiento: boleto.numero_asiento,
+        codigo_boleto: boleto.codigo_boleto
+      }]
+    });
+
+    res.json({ pdf: pdfBuffer.toString('base64') });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al generar PDF' });
+  }
+}
 module.exports = {
   buscarViajesDisponibles,
   asientosOcupados,
@@ -685,5 +741,6 @@ module.exports = {
   listarVentasSucursal,
   listarViajesDisponiblesEncargado,
   cancelarBoletoEncargado,
-  resumenEncargado
+  resumenEncargado,
+  descargarBoletoPDF
 };
