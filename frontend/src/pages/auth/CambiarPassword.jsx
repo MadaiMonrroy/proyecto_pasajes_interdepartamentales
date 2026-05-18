@@ -66,7 +66,7 @@ export default function CambiarPassword() {
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
           required
-          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-10 text-sm font-medium text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+          className="w-full rounded-2xl! border border-slate-200 bg-slate-50 py-3 pl-10 pr-10 text-sm font-medium text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
         />
         <button
           type="button"
@@ -92,7 +92,7 @@ export default function CambiarPassword() {
           </div>
 
           {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+            <div className="mb-4 flex items-center gap-2 rounded-2xl! border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
               <AlertTriangle size={15} className="shrink-0" />{error}
             </div>
           )}
@@ -129,7 +129,7 @@ export default function CambiarPassword() {
                   onChange={e => setConfirmar(e.target.value)}
                   placeholder="Repite la nueva contraseña"
                   required
-                  className={`w-full rounded-2xl border bg-slate-50 py-3 pl-10 pr-10 text-sm font-medium text-slate-800 outline-none transition focus:bg-white focus:ring-2
+                  className={`w-full rounded-2xl! border bg-slate-50 py-3 pl-10 pr-10 text-sm font-medium text-slate-800 outline-none transition focus:bg-white focus:ring-2
                     ${confirmar && confirmar !== passwordNuevo
                       ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
                       : 'border-slate-200 focus:border-teal-500 focus:ring-teal-100'}`}
@@ -150,7 +150,7 @@ export default function CambiarPassword() {
             <button
               type="submit"
               disabled={cargando}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-teal-700 py-3.5 text-sm font-bold text-white transition hover:bg-teal-600 disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl! bg-teal-700 py-3.5 text-sm font-bold text-white transition hover:bg-teal-600 disabled:opacity-70"
             >
               {cargando ? (
                 <><Loader2 size={16} className="animate-spin" /> Guardando...</>
@@ -162,7 +162,7 @@ export default function CambiarPassword() {
         </>
       ) : (
         <div className="py-4 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full! bg-teal-50">
             <CheckCircle2 size={32} className="text-teal-600" />
           </div>
           <p className="text-lg font-black text-slate-900">¡Contraseña actualizada!</p>

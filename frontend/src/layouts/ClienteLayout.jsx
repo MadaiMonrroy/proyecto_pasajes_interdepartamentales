@@ -150,7 +150,7 @@ export default function ClienteLayout() {
 
       {/* Kangrunaan a Lauk (Outlet) */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl! shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-12rem)] w-full relative overflow-hidden">
+        <div className="bg-white rounded-2xl! shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100  min-h-[calc(100vh-12rem)] w-full relative overflow-hidden">
           
           {/* Arkos iti likudan */}
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-teal-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>

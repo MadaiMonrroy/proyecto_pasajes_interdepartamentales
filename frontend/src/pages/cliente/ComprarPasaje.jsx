@@ -111,14 +111,17 @@ export default function ComprarPasaje() {
   }
 
   return (
-    <div className="min-h-screen  p-4 md:p-6">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-2xl font-bold text-slate-900 md:text-3xl">
+    <div className="min-h-screen p-3 sm:p-4 md:p-6">
+      <div className="mx-auto w-full max-w-6xl">
+
+        {/* Título: más pequeño en móvil, crece en pantallas mayores */}
+        <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl md:text-3xl">
           Comprar pasaje
         </h1>
 
         {!viajeSeleccionado && (
           <>
+            {/* SelectorRuta recibe el formulario de búsqueda */}
             <SelectorRuta
               origen={origen}
               destino={destino}
@@ -132,27 +135,30 @@ export default function ComprarPasaje() {
               buscando={buscando}
             />
 
+            {/* Estado de carga */}
             {buscando && (
-              <div className="mt-8 flex flex-col items-center justify-center rounded-3xl! border border-teal-100 bg-teal-50/60 p-8 text-center">
-                <Loader2 className="mb-3 h-8 w-8 animate-spin text-teal-700" />
-                <p className="font-bold text-teal-900">
+              <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-teal-100 bg-teal-50/60 px-4 py-6 text-center sm:mt-8 sm:rounded-3xl sm:p-8">
+                <Loader2 className="mb-2 h-7 w-7 animate-spin text-teal-700 sm:mb-3 sm:h-8 sm:w-8" />
+                <p className="text-sm font-bold text-teal-900 sm:text-base">
                   Buscando viajes disponibles...
                 </p>
               </div>
             )}
 
+            {/* Sin resultados */}
             {busquedaRealizada && !buscando && viajes.length === 0 && (
-              <div className="mt-8 rounded-3xl! border border-amber-200 bg-amber-50 p-6 text-center">
-                <p className="text-lg font-black text-amber-800">
+              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-5 text-center sm:mt-8 sm:rounded-3xl sm:p-6">
+                <p className="text-base font-black text-amber-800 sm:text-lg">
                   No hay buses disponibles para esta ruta.
                 </p>
-                <p className="mt-1 text-sm font-medium text-amber-700">
+                <p className="mt-1 text-xs font-medium text-amber-700 sm:text-sm">
                   Intenta cambiar la fecha, origen o destino.
                 </p>
               </div>
             )}
 
-            <div className="mt-6 grid gap-4">
+            {/* Lista de viajes: gap más compacto en móvil */}
+            <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">
               {viajes.map(viaje => (
                 <CardViaje
                   key={viaje.id}
@@ -165,8 +171,9 @@ export default function ComprarPasaje() {
           </>
         )}
 
+        {/* Vista de selección de asientos + formulario de pasajeros */}
         {viajeSeleccionado && (
-          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <MapaAsientos
               viaje={viajeSeleccionado}
               asientosOcupados={asientosOcupados}

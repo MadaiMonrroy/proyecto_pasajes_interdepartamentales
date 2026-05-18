@@ -14,7 +14,6 @@ async function descargarPDF(id, codigo) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Error al generar PDF');
 
-  // Convertir base64 a blob y descargar
   const byteCharacters = atob(data.pdf);
   const byteNumbers = Array.from(byteCharacters, c => c.charCodeAt(0));
   const byteArray = new Uint8Array(byteNumbers);
@@ -48,38 +47,52 @@ export default function MisBoletos() {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Mis boletos</h2>
+    <div className="p-3 sm:p-6">
+      <h2 className="mb-4 text-xl font-bold sm:mb-6 sm:text-2xl">Mis boletos</h2>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {boletos.map(b => (
-          <div key={b.id} className="bg-white rounded-xl shadow p-5">
-            <div className="flex justify-between">
-              <div>
-                <div className="font-bold">{b.codigo_boleto}</div>
-                <div>{b.origen} → {b.destino}</div>
-                <div className="text-sm text-gray-500">
+          <div key={b.id} className="rounded-xl! bg-white p-3 shadow sm:p-5">
+
+            {/* En móvil: columna. En sm+: fila */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+
+              {/* Info principal */}
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold sm:text-base">{b.codigo_boleto}</div>
+                <div className="mt-0.5 text-sm sm:text-base">
+                  {b.origen} → {b.destino}
+                </div>
+                <div className="mt-0.5 text-xs text-gray-500 sm:text-sm">
                   {new Date(b.fecha_hora_salida).toLocaleString()}
                 </div>
-                <div>Asiento: {b.numero_asiento} | Estado: {b.estado}</div>
+                <div className="mt-0.5 text-xs sm:text-sm">
+                  Asiento: {b.numero_asiento} | Estado: {b.estado}
+                </div>
               </div>
 
-              <div className="text-right">
-                <div className="font-bold text-green-600">Bs. {b.monto_pagado}</div>
+              {/* Precio + botón: en móvil fila entre ellos, en sm columna alineada a la derecha */}
+              <div className="flex items-center justify-between sm:flex-col sm:items-end sm:gap-2">
+                <div className="text-base font-bold text-green-600 sm:text-lg">
+                  Bs. {b.monto_pagado}
+                </div>
                 <button
                   onClick={() => handleDescargar(b.id, b.codigo_boleto)}
                   disabled={descargando === b.id}
-                  className="mt-2 border px-4 py-2 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                  className="rounded-lg! border px-3 py-1.5 text-xs hover:bg-gray-50 disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
                 >
                   {descargando === b.id ? 'Generando...' : 'Descargar PDF'}
                 </button>
               </div>
+
             </div>
           </div>
         ))}
 
         {boletos.length === 0 && (
-          <div className="text-gray-500">No tienes boletos comprados.</div>
+          <div className="text-sm text-gray-500 sm:text-base">
+            No tienes boletos comprados.
+          </div>
         )}
       </div>
     </div>

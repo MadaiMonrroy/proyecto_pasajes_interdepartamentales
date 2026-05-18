@@ -105,7 +105,7 @@ export default function AppRoutes() {
           path="/cambiar-password"
           element={
             <RutaPrivada>
-              <div className="container mt-4">
+              <div className="flex items-center justify-center min-h-screen bg-slate-50">
                 <CambiarPassword />
               </div>
             </RutaPrivada>
