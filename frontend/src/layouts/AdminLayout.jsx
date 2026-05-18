@@ -149,8 +149,8 @@ export default function AdminLayout() {
         </header>
 
         {/* Contenido dinámico */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 lg:p-8">
-          <div className="bg-white rounded-2xl! shadow-sm border border-slate-100/50 p-4 sm:p-6 w-full min-h-[calc(100vh-8rem)]">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto  p-4 lg:p-8">
+          <div className="bg-white rounded-2xl!   w-full">
             <Outlet />
           </div>
         </main>

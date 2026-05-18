@@ -68,7 +68,7 @@ function ModalCancelacion({ boleto, onCerrar, onCancelado }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onCerrar}>
-      <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-3xl!  bg-white shadow-2xl" onClick={e => e.stopPropagation()}>
 
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <p className="font-black text-slate-800">Cancelar boleto</p>
@@ -86,7 +86,7 @@ function ModalCancelacion({ boleto, onCerrar, onCancelado }) {
                 Se devolverá <strong className="text-teal-700">Bs. {exito.monto_devolucion}</strong> descontando la penalización de Bs. {exito.monto_penalizacion}.
               </p>
               <button onClick={() => { onCancelado(); onCerrar(); }}
-                className="w-full rounded-2xl bg-teal-700 py-3 text-sm font-bold text-white hover:bg-teal-600">
+                className="w-full rounded-2xl!  bg-teal-700 py-3 text-sm font-bold text-white hover:bg-teal-600">
                 Aceptar
               </button>
             </div>
@@ -94,17 +94,17 @@ function ModalCancelacion({ boleto, onCerrar, onCancelado }) {
             <div className="flex justify-center py-8"><Loader2 size={24} className="animate-spin text-teal-600" /></div>
           ) : error ? (
             <div>
-              <div className="flex items-start gap-2 rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 mb-4">
+              <div className="flex items-start gap-2 rounded-2xl!  bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 mb-4">
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />{error}
               </div>
-              <button onClick={onCerrar} className="w-full rounded-2xl bg-slate-100 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200">
+              <button onClick={onCerrar} className="w-full rounded-2xl!  bg-slate-100 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200">
                 Cerrar
               </button>
             </div>
           ) : preview && (
             <>
               {/* Info boleto */}
-              <div className="mb-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <div className="mb-4 rounded-2xl!  border border-slate-100 bg-slate-50 px-4 py-3">
                 <p className="text-sm font-bold text-slate-800">{preview.boleto.origen} → {preview.boleto.destino}</p>
                 <p className="text-xs text-slate-400">
                   {preview.boleto.codigo_boleto} · Asiento {preview.boleto.numero_asiento}
@@ -135,18 +135,18 @@ function ModalCancelacion({ boleto, onCerrar, onCancelado }) {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-amber-50 px-4 py-3 mb-5 flex items-start gap-2 text-sm font-semibold text-amber-700">
+              <div className="rounded-2xl!  bg-amber-50 px-4 py-3 mb-5 flex items-start gap-2 text-sm font-semibold text-amber-700">
                 <AlertTriangle size={15} className="shrink-0 mt-0.5" />
                 Esta acción no se puede deshacer. La devolución se procesará en días hábiles.
               </div>
 
               <div className="flex gap-3">
                 <button onClick={onCerrar}
-                  className="flex-1 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                  className="flex-1 rounded-2xl!  border border-slate-200 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                   No cancelar
                 </button>
                 <button onClick={cancelar} disabled={procesando}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-600 py-3 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-70">
+                  className="flex flex-1 items-center justify-center gap-2 rounded-2xl!  bg-red-600 py-3 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-70">
                   {procesando ? <Loader2 size={15} className="animate-spin" /> : <Ban size={15} />}
                   {procesando ? 'Cancelando...' : 'Confirmar cancelación'}
                 </button>
@@ -199,8 +199,8 @@ export default function DashboardCliente() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6">
-      <div className="mx-auto max-w-3xl">
+    <div className="min-h-screen  p-4 md:p-6">
+      <div className="mx-auto ">
 
         {/* Cabecera */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -213,13 +213,13 @@ export default function DashboardCliente() {
             </p>
           </div>
           <button onClick={cargar}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:border-teal-300">
+            className="flex items-center gap-2 rounded-xl! border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:border-teal-300">
             <RefreshCw size={15} /> Actualizar
           </button>
         </div>
 
         {error && (
-          <div className="mb-5 flex items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+          <div className="mb-5 flex items-center gap-2 rounded-2xl!  bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
             <AlertTriangle size={16} />{error}
           </div>
         )}
@@ -231,7 +231,7 @@ export default function DashboardCliente() {
             { label: 'Activos', valor: activos, color: 'text-green-700' },
             { label: 'Cancelados', valor: cancelados, color: 'text-red-500' },
           ].map(k => (
-            <div key={k.label} className="rounded-3xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div key={k.label} className="rounded-3xl!  border border-slate-100 bg-white p-4 text-center shadow-sm">
               <p className={`text-2xl font-black ${k.color}`}>{k.valor}</p>
               <p className="text-xs font-semibold text-slate-400">{k.label}</p>
             </div>
@@ -239,14 +239,14 @@ export default function DashboardCliente() {
         </div>
 
         {/* Filtros */}
-        <div className="mb-4 flex gap-1 rounded-2xl border border-slate-200 bg-white p-1">
+        <div className="mb-4 flex gap-1 rounded-2xl!  border border-slate-200 bg-white p-1">
           {[
             { v: 'todos', l: 'Todos' },
             { v: 'activos', l: 'Activos' },
             { v: 'cancelados', l: 'Cancelados' },
           ].map(f => (
             <button key={f.v} onClick={() => setFiltro(f.v)}
-              className={`flex-1 rounded-xl py-2 text-sm font-bold transition
+              className={`flex-1 rounded-xl! py-2 text-sm font-bold transition
                 ${filtro === f.v ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}>
               {f.l}
             </button>
@@ -257,14 +257,14 @@ export default function DashboardCliente() {
         {cargando ? (
           <div className="flex justify-center py-16"><Loader2 size={28} className="animate-spin text-teal-600" /></div>
         ) : filtrados.length === 0 ? (
-          <div className="rounded-3xl border border-slate-100 bg-white py-16 text-center shadow-sm">
+          <div className="rounded-3xl!  border border-slate-100 bg-white py-16 text-center shadow-sm">
             <Ticket size={36} className="mx-auto mb-3 text-slate-300" />
             <p className="text-sm font-semibold text-slate-400">No tienes boletos aún.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {filtrados.map(b => (
-              <div key={b.id} className={`rounded-3xl border bg-white shadow-sm overflow-hidden
+              <div key={b.id} className={`rounded-3xl!  border bg-white shadow-sm overflow-hidden
                 ${b.estado === 'Cancelado' ? 'border-slate-100 opacity-70' : 'border-slate-100'}`}>
 
                 {/* Header */}

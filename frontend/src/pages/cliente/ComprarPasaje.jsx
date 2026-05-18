@@ -111,7 +111,7 @@ export default function ComprarPasaje() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+    <div className="min-h-screen  p-4 md:p-6">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-6 text-2xl font-bold text-slate-900 md:text-3xl">
           Comprar pasaje

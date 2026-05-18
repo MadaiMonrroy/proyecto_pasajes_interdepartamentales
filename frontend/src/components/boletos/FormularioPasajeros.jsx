@@ -108,19 +108,8 @@ export default function FormularioPasajeros({
           </p>
         </div>
 
-        <div className="mb-5 grid gap-4 md:grid-cols-2">
-          <label className="block">
-            <span className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-600">
-              <Mail size={18} /> Correo comprobante
-            </span>
-            <input
-              type="email"
-              value={correoComprobante}
-              onChange={e => setCorreoComprobante(e.target.value)}
-              className="w-full rounded-2xl! border border-slate-200 px-4 py-3 outline-none focus:border-teal-600"
-              placeholder="correo@ejemplo.com"
-            />
-          </label>
+        <div className="mb-5 gap-4">
+          
 
           <div>
             <span className="mb-2 block text-sm font-bold text-slate-600">
@@ -131,7 +120,7 @@ export default function FormularioPasajeros({
               <button
                 type="button"
                 onClick={() => setMetodoPago('QR')}
-                className={`rounded-2xl! border p-4 text-left transition ${
+                className={`rounded-2xl! border p-4 text-left transition  ${
                   metodoPago === 'QR'
                     ? 'border-teal-700 bg-teal-50 text-teal-900'
                     : 'border-slate-200 bg-white text-slate-600'
@@ -154,7 +143,19 @@ export default function FormularioPasajeros({
                 <p className="mt-2 font-black">Tarjeta</p>
               </button>
             </div>
-          </div>
+          </div><br/>
+          <label className="block gap-2 w-full">
+            <span className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-600 ">
+              <Mail size={18} /> Correo comprobante
+            </span>
+            <input
+              type="email"
+              value={correoComprobante}
+              onChange={e => setCorreoComprobante(e.target.value)}
+              className="w-full rounded-2xl! border border-slate-200 px-4 py-3 outline-none focus:border-teal-600"
+              placeholder="correo@ejemplo.com"
+            />
+          </label>
         </div>
 
         <div className="grid gap-4">

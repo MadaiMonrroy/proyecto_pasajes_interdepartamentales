@@ -12,7 +12,7 @@ const CSS = `
     display: flex;
     font-family: 'DM Sans', sans-serif;
     background: #f0fdf9;
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
   }
 
@@ -101,8 +101,11 @@ const CSS = `
   .vg-right {
     flex: 1;
     display: flex; align-items: center; justify-content: center;
-    padding: 2rem 1.5rem;
+    padding: 1rem 0.75rem;
     position: relative; z-index: 1;
+  }
+  @media (min-width: 480px) {
+    .vg-right { padding: 2rem 1.5rem; }
   }
 
   /* ── Logo ── */
@@ -211,7 +214,7 @@ const CSS = `
     background: rgba(255,255,255,0.88);
     border: 1px solid rgba(13,148,136,0.15);
     border-radius: 28px;
-    padding: 2.5rem 2.25rem;
+    padding: 1.25rem 1rem;
     backdrop-filter: blur(20px);
     box-shadow:
       inset 0 2px 0 rgba(255,255,255,0.95),
@@ -221,6 +224,12 @@ const CSS = `
     opacity: 0; transform: translateY(32px) scale(0.97);
     transition: opacity 0.85s cubic-bezier(0.34,1.4,0.64,1) 0.1s,
                 transform 0.85s cubic-bezier(0.34,1.4,0.64,1) 0.1s;
+  }
+  @media (min-width: 380px) {
+    .vg-card { padding: 1.75rem 1.5rem; }
+  }
+  @media (min-width: 480px) {
+    .vg-card { padding: 2.5rem 2.25rem; }
   }
   .vg-card.vg-show { opacity:1; transform: translateY(0) scale(1); }
 
@@ -236,12 +245,29 @@ const CSS = `
   }
 
   /* Logo móvil */
-  .vg-mobile-logo { display:flex; justify-content:center; margin-bottom:1.5rem; }
+  .vg-mobile-logo { display:flex; justify-content:center; margin-bottom:1rem; }
   @media (min-width: 1024px) { .vg-mobile-logo { display:none; } }
+
+  /* logo-box adaptado para móvil pequeño */
+  .vg-logo-box-sm {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: linear-gradient(135deg, #0d9488, #0f766e);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(13,148,136,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .vg-logo-box-sm::after {
+    content: '';
+    position: absolute; top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: logoShine 4s ease-in-out infinite;
+  }
 
   .vg-card-title {
     font-family: 'Syne', sans-serif;
-    font-size: 1.65rem; font-weight: 800;
+    font-size: clamp(1.2rem, 5vw, 1.65rem);
+    font-weight: 800;
     color: #134e4a; letter-spacing: -0.03em; margin-bottom: 0.3rem;
   }
   .vg-card-sub { font-size: 0.88rem; color: #7db8b4; font-weight: 400; }
@@ -264,19 +290,22 @@ const CSS = `
   .vg-error p   { font-size:0.84rem; color:#9f1239; margin:0; line-height:1.5; }
 
   /* ── Campos ── */
-  .vg-field { margin-bottom: 1.1rem; }
+  .vg-field { margin-bottom: 1rem; }
 
   .vg-field-top {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 7px;
+    gap: 8px;
   }
   .vg-field-top label {
     font-size: 0.78rem; font-weight: 600;
     color: #134e4a; letter-spacing: 0.06em; text-transform: uppercase;
+    flex-shrink: 0;
   }
   .vg-field-top a {
-    font-size: 0.77rem; font-weight: 500;
+    font-size: 0.75rem; font-weight: 500;
     color: #0d9488; text-decoration: none; transition: color 0.2s;
+    white-space: nowrap;
   }
   .vg-field-top a:hover { color: #0f766e; text-decoration: underline; }
 
@@ -323,6 +352,7 @@ const CSS = `
 
   input.vg-input {
     flex: 1;
+    min-width: 0;
     background: transparent;
     border: none; outline: none;
     padding: 13px 12px;
@@ -343,7 +373,7 @@ const CSS = `
 
   /* ── Botón ── */
   .vg-btn {
-    width: 100%; margin-top: 1.5rem;
+    width: 100%; margin-top: 1.25rem;
     position: relative; overflow: hidden;
     padding: 14px 20px;
     font-family: 'Syne', sans-serif;
@@ -383,7 +413,7 @@ const CSS = `
   /* ── Separador ── */
   .vg-sep {
     display: flex; align-items: center; gap: 12px;
-    margin: 1.5rem 0 1.25rem;
+    margin: 1.25rem 0 1rem;
   }
   .vg-sep::before, .vg-sep::after {
     content:''; flex:1; height:1px;
@@ -392,7 +422,7 @@ const CSS = `
   .vg-sep span { font-size:0.75rem; color:#99c9c4; white-space:nowrap; }
 
   /* ── Registro ── */
-  .vg-register { margin-top:1.5rem; text-align:center; }
+  .vg-register { margin-top:1rem; text-align:center; }
   .vg-register p { font-size:0.87rem; color:#7db8b4; }
   .vg-register a {
     color:#0d9488; font-weight:600; text-decoration:none;
@@ -443,7 +473,7 @@ export default function Login() {
 
       <div className="vg-root">
 
-        {/* Fondo */}
+        {/* Fondo — sin cambios */}
         <div className="vg-bg" aria-hidden="true">
           <div className="vg-bg-dots" />
           <div className="vg-blob vg-blob--1" />
@@ -461,7 +491,7 @@ export default function Login() {
           <div className="vg-particle vg-particle--10" />
         </div>
 
-        {/* Lado izquierdo */}
+        {/* Lado izquierdo — sin cambios */}
         <div className="vg-left">
           <div className={`vg-logo ${s}`}>
             <div className="vg-logo-box">
@@ -504,14 +534,15 @@ export default function Login() {
         <div className="vg-right">
           <div className={`vg-card ${s}`}>
 
+            {/* Logo móvil con tamaño reducido */}
             <div className="vg-mobile-logo">
-              <div className="vg-logo-box">
-                <BusFront size={26} color="white" />
+              <div className="vg-logo-box-sm">
+                <BusFront size={22} color="white" />
               </div>
             </div>
 
             <p className="vg-card-title">Bienvenido de nuevo</p>
-            <p className="vg-card-sub" style={{ marginBottom: '1.75rem' }}>
+            <p className="vg-card-sub" style={{ marginBottom: '1.25rem' }}>
               Ingresa tus credenciales para continuar
             </p>
 
