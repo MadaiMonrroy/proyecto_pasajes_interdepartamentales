@@ -7,6 +7,7 @@ import {
   X,
   CheckCircle2,
   Printer,
+  Download,
   Calculator
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -29,17 +30,16 @@ export default function FormularioPasajerosEncargado({
   correoComprobante,
   setCorreoComprobante,
   precio,
-  onConfirmar
+  onConfirmar,
+  onVentaCompletada   // ← nuevo prop: llamado al cerrar el modal de éxito
 }) {
-  const [pasajeros, setPasajeros]   = useState([]);
-  const [modal, setModal]           = useState(null);
-  const [procesando, setProcesando] = useState(false);
-
-  // Para efectivo: monto recibido
+  const [pasajeros,   setPasajeros]   = useState([]);
+  const [modal,       setModal]       = useState(null);
+  const [procesando,  setProcesando]  = useState(false);
   const [montoRecibido, setMontoRecibido] = useState('');
 
-  const total   = Number(precio) * cantidadPasajes;
-  const vuelto  = montoRecibido ? Math.max(0, Number(montoRecibido) - total).toFixed(2) : null;
+  const total  = Number(precio) * cantidadPasajes;
+  const vuelto = montoRecibido ? Math.max(0, Number(montoRecibido) - total).toFixed(2) : null;
 
   useEffect(() => {
     setPasajeros(prev =>
@@ -68,7 +68,6 @@ export default function FormularioPasajerosEncargado({
   function iniciarPago(e) {
     e.preventDefault();
     if (!validar()) return;
-
     if (metodoPago === 'QR') {
       setModal({ tipo: 'qr', titulo: 'Pago por QR' });
     } else {
@@ -76,15 +75,14 @@ export default function FormularioPasajerosEncargado({
     }
   }
 
+  // Abre el PDF en una nueva pestaña y lanza el diálogo de impresión
   function imprimirPDF(base64) {
     const byteCharacters = atob(base64);
     const byteNumbers    = Array.from(byteCharacters, c => c.charCodeAt(0));
     const byteArray      = new Uint8Array(byteNumbers);
     const blob           = new Blob([byteArray], { type: 'application/pdf' });
     const url            = URL.createObjectURL(blob);
-
-    // Abrir e imprimir automáticamente
-    const ventana = window.open(url, '_blank');
+    const ventana        = window.open(url, '_blank');
     if (ventana) {
       ventana.addEventListener('load', () => {
         ventana.focus();
@@ -93,25 +91,46 @@ export default function FormularioPasajerosEncargado({
     }
   }
 
+  // Descarga el PDF directamente
+  function descargarPDF(base64, codigo) {
+    const byteCharacters = atob(base64);
+    const byteNumbers    = Array.from(byteCharacters, c => c.charCodeAt(0));
+    const byteArray      = new Uint8Array(byteNumbers);
+    const blob           = new Blob([byteArray], { type: 'application/pdf' });
+    const url            = URL.createObjectURL(blob);
+    const a              = document.createElement('a');
+    a.href               = url;
+    a.download           = `${codigo || 'comprobante'}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function confirmarCompraFinal() {
     setProcesando(true);
     try {
       const data = await onConfirmar(pasajeros);
       setModal({
-        tipo: 'success',
-        titulo: 'Venta realizada',
+        tipo:      'success',
+        titulo:    'Venta realizada',
         pdfBase64: data?.comprobante_pdf || null,
-        boletos: data?.boletos || []
+        boletos:   data?.boletos || []
       });
     } catch (error) {
       setModal({
-        tipo: 'error',
-        titulo: 'Error en la venta',
+        tipo:    'error',
+        titulo:  'Error en la venta',
         mensaje: error.message || 'Ocurrió un error inesperado.'
       });
     } finally {
       setProcesando(false);
     }
+  }
+
+  // Cierra el modal de éxito y avisa al padre para volver a la lista
+  function cerrarExito() {
+    setModal(null);
+    setMontoRecibido('');
+    if (onVentaCompletada) onVentaCompletada();
   }
 
   return (
@@ -130,7 +149,7 @@ export default function FormularioPasajerosEncargado({
           </p>
         </div>
 
-        {/* Método de pago — solo QR y Efectivo */}
+        {/* Método de pago */}
         <div className="mb-5">
           <p className="mb-2 text-sm font-bold text-slate-600">Método de pago</p>
           <div className="grid grid-cols-2 gap-3">
@@ -162,7 +181,7 @@ export default function FormularioPasajerosEncargado({
           </div>
         </div>
 
-        {/* Si es efectivo: monto recibido */}
+        {/* Calcular vuelto (solo efectivo) */}
         {metodoPago === 'Efectivo' && (
           <div className="mb-5 rounded-2xl! border border-slate-200 p-4">
             <p className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-600">
@@ -191,13 +210,11 @@ export default function FormularioPasajerosEncargado({
           </div>
         )}
 
-        {/* Correo comprobante (opcional) */}
-        <div className="mb-5 ">
-            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-600">
-            <Mail size={16} /> 
-          <label className=" text-sm font-bold text-slate-600">
-            Correo para comprobante (opcional)  
-          </label>
+        {/* Correo comprobante */}
+        <div className="mb-5">
+          <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-600">
+            <Mail size={16} />
+            <label>Correo para comprobante (opcional)</label>
           </div>
           <input
             type="email"
@@ -236,7 +253,7 @@ export default function FormularioPasajerosEncargado({
                 />
               </div>
 
-              <label className="mt-3 flex items-center gap-2 text-sm font-semibold text-slate-600 cursor-pointer">
+              <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-600">
                 <input
                   type="checkbox"
                   checked={pasajero.es_menor}
@@ -281,6 +298,7 @@ export default function FormularioPasajerosEncargado({
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
           <div className="w-full max-w-md rounded-3xl! bg-white p-6 shadow-2xl">
+
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-black text-teal-900">{modal.titulo}</h3>
               {modal.tipo !== 'success' && (
@@ -302,9 +320,7 @@ export default function FormularioPasajerosEncargado({
                     size={200}
                   />
                 </div>
-                <p className="mb-1 text-sm font-semibold text-slate-600">
-                  Monto a cobrar
-                </p>
+                <p className="mb-1 text-sm font-semibold text-slate-600">Monto a cobrar</p>
                 <p className="mb-5 text-2xl font-black text-teal-800">Bs. {total}</p>
                 <button
                   onClick={confirmarCompraFinal}
@@ -356,35 +372,47 @@ export default function FormularioPasajerosEncargado({
               </>
             )}
 
-            {/* Éxito con imprimir */}
+            {/* Éxito */}
             {modal.tipo === 'success' && (
               <div className="text-center">
                 <CheckCircle2 className="mx-auto mb-3 h-14 w-14 text-teal-600" />
-                <p className="mb-1 text-lg font-black text-slate-800">
-                  ¡Venta completada!
-                </p>
-                <p className="mb-2 text-sm text-slate-500">
+                <p className="mb-1 text-lg font-black text-slate-800">¡Venta completada!</p>
+                <p className="mb-4 text-sm text-slate-500">
                   Boletos: {modal.boletos?.map(b => b.codigo_boleto).join(', ')}
                 </p>
 
                 {modal.pdfBase64 && (
-                  <button
-                    onClick={() => imprimirPDF(modal.pdfBase64)}
-                    className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl! bg-teal-800 py-3 font-black text-white hover:bg-teal-700"
-                  >
-                    <Printer size={20} />
-                    Imprimir comprobante
-                  </button>
+                  <>
+                    {/* Imprimir: abre PDF y lanza diálogo de impresora */}
+                    <button
+                      onClick={() => imprimirPDF(modal.pdfBase64)}
+                      className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl! bg-teal-800 py-3 font-black text-white hover:bg-teal-700"
+                    >
+                      <Printer size={18} />
+                      Imprimir comprobante
+                    </button>
+
+                    {/* Descargar: descarga el archivo PDF */}
+                    <button
+                      onClick={() => descargarPDF(modal.pdfBase64, modal.boletos?.[0]?.codigo_boleto)}
+                      className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl! border border-teal-700 py-3 font-black text-teal-800 hover:bg-teal-50"
+                    >
+                      <Download size={18} />
+                      Descargar PDF
+                    </button>
+                  </>
                 )}
 
+                {/* Cerrar: vuelve a la lista de viajes */}
                 <button
-                  onClick={() => setModal(null)}
+                  onClick={cerrarExito}
                   className="w-full rounded-2xl! bg-slate-100 py-3 font-bold text-slate-700 hover:bg-slate-200"
                 >
-                  Cerrar
+                  Cerrar y nueva venta
                 </button>
               </div>
             )}
+
           </div>
         </div>
       )}

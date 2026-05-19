@@ -4,42 +4,36 @@ import { Loader2, Search, SlidersHorizontal, X } from 'lucide-react';
 import {
   obtenerAsientosOcupados,
   comprarBoleto,
-  listarViajesEncargado          // ← función nueva que agregas a boletosApi.js
+  listarViajesEncargado
 } from '../../api/boletosApi';
 
-import CardViajeEncargado          from '../../components/boletos/CardViajeEncargado';
-import MapaAsientos                from '../../components/boletos/MapaAsientos';
+import CardViajeEncargado           from '../../components/boletos/CardViajeEncargado';
+import MapaAsientos                 from '../../components/boletos/MapaAsientos';
 import FormularioPasajerosEncargado from '../../components/boletos/FormularioPasajerosEncargado';
-
-// ── Paso 1: Lista de viajes
-// ── Paso 2: Selección de asientos + formulario
 
 export default function VenderPasaje() {
   // ── Viajes ──
-  const [viajes, setViajes]           = useState([]);
-  const [cargando, setCargando]       = useState(true);
-  const [error, setError]             = useState('');
+  const [viajes,   setViajes]   = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error,    setError]    = useState('');
 
   // ── Filtros ──
-  const [filtroOrigen,  setFiltroOrigen]  = useState('');
-  const [filtroDestino, setFiltroDestino] = useState('');
-  const [filtroFecha,   setFiltroFecha]   = useState('');
-  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [filtroOrigen,    setFiltroOrigen]    = useState('');
+  const [filtroDestino,   setFiltroDestino]   = useState('');
+  const [filtroFecha,     setFiltroFecha]     = useState('');
+  const [mostrarFiltros,  setMostrarFiltros]  = useState(false);
 
   // ── Selección ──
-  const [viajeSeleccionado,    setViajeSeleccionado]    = useState(null);
-  const [asientosOcupados,     setAsientosOcupados]     = useState([]);
+  const [viajeSeleccionado,     setViajeSeleccionado]     = useState(null);
+  const [asientosOcupados,      setAsientosOcupados]      = useState([]);
   const [asientosSeleccionados, setAsientosSeleccionados] = useState([]);
-  const [cantidadPasajes,      setCantidadPasajes]      = useState(1);
+  const [cantidadPasajes,       setCantidadPasajes]       = useState(1);
 
   // ── Pago ──
   const [metodoPago,        setMetodoPago]        = useState('QR');
   const [correoComprobante, setCorreoComprobante] = useState('');
 
-  const departamentos = [
-    'La Paz', 'Cochabamba', 'Santa Cruz',
-    
-  ];
+  const departamentos = ['La Paz', 'Cochabamba', 'Santa Cruz'];
 
   // ── Cargar viajes disponibles ──
   useEffect(() => {
@@ -91,7 +85,8 @@ export default function VenderPasaje() {
     setAsientosSeleccionados([]);
   }
 
-  // ── Confirmar compra — retorna data para que el formulario pueda imprimir ──
+  // ── Confirmar compra ──
+  // NO vuelve a la lista aquí — el formulario lo hará cuando el encargado cierre el modal
   async function confirmarCompra(pasajeros) {
     if (asientosSeleccionados.length !== cantidadPasajes) {
       throw new Error(`Debe seleccionar ${cantidadPasajes} asiento(s).`);
@@ -109,19 +104,22 @@ export default function VenderPasaje() {
 
     const data = await comprarBoleto(payload);
 
-    // Refrescar lista de viajes para actualizar asientos ocupados
-    const actualizados = await listarViajesEncargado();
-    setViajes(actualizados);
+    // Refrescar lista de viajes en segundo plano
+    listarViajesEncargado().then(setViajes).catch(() => {});
 
-    // Volver a la lista después de éxito
-    setViajeSeleccionado(null);
-    setAsientosSeleccionados([]);
-
-    return data; // el formulario usará data.comprobante_pdf para imprimir
+    // Retornar data con comprobante_pdf y boletos para que el modal los use
+    return data;
   }
 
-  // ─────────────────────────────────────────────────────────
-  // RENDER
+  // ── Llamado cuando el encargado cierra el modal de éxito ──
+  function onVentaCompletada() {
+    setViajeSeleccionado(null);
+    setAsientosSeleccionados([]);
+    setMetodoPago('QR');
+    setCorreoComprobante('');
+    setCantidadPasajes(1);
+  }
+
   // ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6">
@@ -161,7 +159,6 @@ export default function VenderPasaje() {
         {/* ── PASO 1: lista de viajes ── */}
         {!viajeSeleccionado && (
           <>
-            {/* Panel de filtros */}
             {mostrarFiltros && (
               <div className="mb-5 rounded-3xl! border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-3 flex items-center justify-between">
@@ -187,9 +184,7 @@ export default function VenderPasaje() {
                       className="w-full rounded-xl! border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:border-teal-500"
                     >
                       <option value="">Todos</option>
-                      {departamentos.map(d => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
+                      {departamentos.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
 
@@ -203,9 +198,7 @@ export default function VenderPasaje() {
                       className="w-full rounded-xl! border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:border-teal-500"
                     >
                       <option value="">Todos</option>
-                      {departamentos.map(d => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
+                      {departamentos.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
 
@@ -224,7 +217,6 @@ export default function VenderPasaje() {
               </div>
             )}
 
-            {/* Estado cargando */}
             {cargando && (
               <div className="flex flex-col items-center justify-center rounded-3xl! border border-teal-100 bg-teal-50/60 p-12 text-center">
                 <Loader2 className="mb-3 h-8 w-8 animate-spin text-teal-700" />
@@ -232,14 +224,12 @@ export default function VenderPasaje() {
               </div>
             )}
 
-            {/* Error */}
             {!cargando && error && (
               <div className="rounded-3xl! border border-red-200 bg-red-50 p-6 text-center">
                 <p className="font-bold text-red-700">{error}</p>
               </div>
             )}
 
-            {/* Sin resultados */}
             {!cargando && !error && viajesFiltrados.length === 0 && (
               <div className="rounded-3xl! border border-amber-200 bg-amber-50 p-8 text-center">
                 <Search size={32} className="mx-auto mb-3 text-amber-400" />
@@ -247,17 +237,13 @@ export default function VenderPasaje() {
                   {hayFiltros ? 'Sin viajes para esos filtros' : 'No hay viajes disponibles'}
                 </p>
                 {hayFiltros && (
-                  <button
-                    onClick={limpiarFiltros}
-                    className="mt-3 text-sm font-bold text-amber-700 underline"
-                  >
+                  <button onClick={limpiarFiltros} className="mt-3 text-sm font-bold text-amber-700 underline">
                     Limpiar filtros
                   </button>
                 )}
               </div>
             )}
 
-            {/* Lista de viajes */}
             {!cargando && !error && viajesFiltrados.length > 0 && (
               <>
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -280,7 +266,6 @@ export default function VenderPasaje() {
         {/* ── PASO 2: asientos + formulario ── */}
         {viajeSeleccionado && (
           <>
-            {/* Info del viaje seleccionado */}
             <div className="mb-4 flex items-center gap-3 rounded-2xl! border border-teal-100 bg-teal-50 px-5 py-3">
               <div className="flex-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">
@@ -294,37 +279,28 @@ export default function VenderPasaje() {
                   })}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-teal-600">
-                    Pasajeros
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCantidadPasajes(v => Math.max(1, v - 1));
-                        setAsientosSeleccionados([]);
-                      }}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-teal-200 bg-white text-lg font-bold text-teal-700 hover:bg-teal-100"
-                    >
-                      −
-                    </button>
-                    <span className="w-6 text-center text-base font-black text-teal-900">
-                      {cantidadPasajes}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const libres = Number(viajeSeleccionado.capacidad) - asientosOcupados.length;
-                        setCantidadPasajes(v => Math.min(libres, v + 1));
-                        setAsientosSeleccionados([]);
-                      }}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-teal-200 bg-white text-lg font-bold text-teal-700 hover:bg-teal-100"
-                    >
-                      +
-                    </button>
-                  </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-teal-600">
+                  Pasajeros
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setCantidadPasajes(v => Math.max(1, v - 1)); setAsientosSeleccionados([]); }}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-teal-200 bg-white text-lg font-bold text-teal-700 hover:bg-teal-100"
+                  >−</button>
+                  <span className="w-6 text-center text-base font-black text-teal-900">
+                    {cantidadPasajes}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const libres = Number(viajeSeleccionado.capacidad) - asientosOcupados.length;
+                      setCantidadPasajes(v => Math.min(libres, v + 1));
+                      setAsientosSeleccionados([]);
+                    }}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-teal-200 bg-white text-lg font-bold text-teal-700 hover:bg-teal-100"
+                  >+</button>
                 </div>
               </div>
             </div>
@@ -348,6 +324,7 @@ export default function VenderPasaje() {
                 setCorreoComprobante={setCorreoComprobante}
                 precio={viajeSeleccionado.precio}
                 onConfirmar={confirmarCompra}
+                onVentaCompletada={onVentaCompletada}
               />
             </div>
           </>
