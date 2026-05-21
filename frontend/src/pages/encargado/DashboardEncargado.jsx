@@ -244,7 +244,7 @@ export default function DashboardEncargado() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto ">
 
         {/* Cabecera */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
